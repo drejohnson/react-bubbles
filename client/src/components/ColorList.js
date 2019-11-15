@@ -7,7 +7,6 @@ const initialColor = {
 };
 
 const ColorList = ({ colors, updateColors }) => {
-  console.log(colors);
   const [editing, setEditing] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
 
@@ -16,16 +15,23 @@ const ColorList = ({ colors, updateColors }) => {
     setColorToEdit(color);
   };
 
-  const saveEdit = e => {
+  const saveEdit = async e => {
     e.preventDefault();
-    // Make a put request to save your updated color
-    // think about where will you get the id from...
-    // where is is saved right now?
+    try {
+      const res = await axiosWithAuth().put(
+        `/api/colors/${colorToEdit.id}`,
+        colorToEdit
+      );
+      const data = await res.data;
+      const newColors = colors.filter(color => color.id !== colorToEdit.id);
+      updateColors([...newColors, data]);
+      setEditing(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const deleteColor = async color => {
-    // make a delete request to delete this color
-
     try {
       const res = await axiosWithAuth().delete(
         `/api/colors/${color.id}`,
@@ -34,7 +40,6 @@ const ColorList = ({ colors, updateColors }) => {
       const data = await res.data;
       const newColors = colors.filter(color => color.id !== data);
       updateColors(newColors);
-      console.log(data);
     } catch (error) {
       console.log(error);
     }
