@@ -24,7 +24,7 @@ const Login = () => {
       const res = await axiosWithAuth().post("/api/login", credentials);
       const data = await res.data;
       localStorage.setItem("token", data.payload);
-      // history.push("/");
+      history.push("/bubbles");
     } catch (error) {
       console.error(error);
     }
